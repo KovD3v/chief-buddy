@@ -1,54 +1,80 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
-import SignUpUserSteps from "@/components/tutorial/SignUpUserSteps";
-import Header from "@/components/Header";
+"use client";
 
-export default async function Index() {
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createClient();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
+import { Input } from "@/components/ui/input";
+import { Label } from "@radix-ui/react-label";
+import { Button } from "@/components/ui/button";
 
-  const isSupabaseConnected = canInitSupabaseClient();
+import Navbar from "@/components/Navbar";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 
-  return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <DeployButton />
-          {isSupabaseConnected && <AuthButton />}
-        </div>
-      </nav>
+import { Lightbulb, Star, HelpCircle, Flame } from "lucide-react";
 
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">
-          <h2 className="font-bold text-4xl mb-4">Next steps</h2>
-          {isSupabaseConnected ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-        </main>
-      </div>
+import { useMeal } from "@/utils/meal";
 
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>
-          Powered by{" "}
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            Supabase
-          </a>
-        </p>
-      </footer>
-    </div>
-  );
+const pagesCard = [
+	{
+		title: "Give Me Ideas",
+		description: "Like tinder but for food",
+		icon: <Lightbulb className="w-full" size={64} />,
+	},
+	{
+		title: "Whit this?",
+		description: "Suggestion by ingredients",
+		icon: <HelpCircle className="w-full" size={64} />,
+	},
+	{
+		title: "Kinda Want",
+		description: "Meals by preference",
+		icon: <Star className="w-full" size={64} />,
+	},
+	{
+		title: "Burn",
+		description: "The best of th less",
+		icon: <Flame className="w-full" size={64} />,
+	},
+];
+
+export default function Index() {
+	const [placeholder] = useMeal();
+
+	return (
+		<div className="flex flex-col w-full items-center gap-20">
+			<Navbar />
+			<div className="grid w-full max-w-sm items-center gap-1.5">
+				<Label
+					htmlFor="search"
+					className="text-xl font-bold text-center">
+					Search for a dish
+				</Label>
+				<Input
+					id="search"
+					placeholder={placeholder?.strMeal}
+					className="m-2 shadow-md"
+				/>
+			</div>
+			<div className="grid w-full sm:grid-cols-2 lg:grid-cols-4 gap-5 p-8">
+				{pagesCard.map((card, index) => (
+					<Card key={index}>
+						<CardHeader>
+							<CardTitle>{card.title}</CardTitle>
+							<CardDescription>
+								{card.description}
+							</CardDescription>
+						</CardHeader>
+						<CardContent>{card.icon}</CardContent>
+						<CardFooter>
+							<Button className="flex w-full">Try it</Button>
+						</CardFooter>
+					</Card>
+				))}
+			</div>
+		</div>
+	);
 }
